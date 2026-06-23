@@ -450,7 +450,7 @@ h1 {
 
 .tabs-header {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   transition: var(--transition-theme);
@@ -1351,4 +1351,207 @@ footer {
   .mm-mode-label {
     font-size: 0.62rem;
   }
+}
+
+/* ════════════════════════════════════════
+   COMPRESS / DECOMPRESS
+════════════════════════════════════════ */
+
+/* Quality slider row */
+.compress-quality-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.45rem;
+}
+
+.compress-quality-row input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-mid);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.compress-quality-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--border-hi);
+}
+
+.compress-quality-row input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+}
+
+.quality-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text);
+  min-width: 2.8rem;
+  text-align: right;
+}
+
+.compress-hint {
+  font-size: 0.77rem;
+  color: var(--text-muted);
+  margin-top: 0.45rem;
+  line-height: 1.5;
+}
+
+/* Method tabs */
+.compress-method-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.45rem;
+}
+
+.method-btn {
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--border-mid);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.method-btn:hover {
+  border-color: var(--border-hi);
+  color: var(--text);
+}
+
+.method-btn.active {
+  background: var(--accent);
+  color: var(--accent-inv);
+  border-color: var(--accent);
+}
+
+/* Compress stats in result */
+.compress-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.cstat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cstat-label {
+  font-size: 0.67rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: 'Space Mono', monospace;
+}
+
+.cstat-val {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+}
+
+.cstat-new {
+  color: var(--success-text);
+}
+
+.cstat-arrow {
+  font-size: 1rem;
+  color: var(--text-dim);
+  margin-top: 0.9rem;
+}
+
+.cstat-pct {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.cstat-saved {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.cstat-saved .cstat-val {
+  color: var(--success-text);
+}
+
+.cstat-neutral {
+  background: var(--warn-bg);
+  border-color: var(--warn-border);
+}
+
+/* Decompress info table */
+.decompress-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.dinfo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.dinfo-label {
+  color: var(--text-muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.dinfo-row span:last-child {
+  font-weight: 600;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+}
+
+
+/* Format hint variants */
+.compress-hint-warn {
+  color: #c8853a !important;
+  background: rgba(200, 133, 58, 0.08);
+  border: 1px solid rgba(200, 133, 58, 0.22);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  margin-top: 0.5rem !important;
+}
+
+.compress-hint-ok {
+  color: var(--success-text) !important;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  margin-top: 0.5rem !important;
+}
+
+[data-theme="light"] .compress-hint-warn {
+  color: #a05f10 !important;
+  background: rgba(200, 133, 58, 0.1);
+  border-color: rgba(200, 133, 58, 0.3);
 }

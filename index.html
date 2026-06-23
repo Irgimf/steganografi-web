@@ -86,12 +86,12 @@
         <div class="how-arrow" aria-hidden="true">&#8594;</div>
         <div class="how-step">
           <div class="dot" aria-hidden="true">2</div>
-          <span>Tulis pesan</span>
+          <span>Tulis pesan / Pilih opsi</span>
         </div>
         <div class="how-arrow" aria-hidden="true">&#8594;</div>
         <div class="how-step">
           <div class="dot" aria-hidden="true">3</div>
-          <span>Enkode / Dekode</span>
+          <span>Enkode / Dekode / Kompresi</span>
         </div>
         <div class="how-arrow" aria-hidden="true">&#8594;</div>
         <div class="how-step">
@@ -147,6 +147,54 @@
               <line x1="12" y1="16" x2="12" y2="16.01" />
             </svg>
             <span>Baca Pesan</span>
+          </button>
+          <button
+            class="tab-btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-compress"
+            id="tab-compress"
+            onclick="switchTab('compress')"
+          >
+            <svg
+              class="tab-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <polyline points="4 14 10 14 10 20" />
+              <polyline points="20 10 14 10 14 4" />
+              <line x1="14" y1="10" x2="21" y2="3" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            <span>Kompresi</span>
+          </button>
+          <button
+            class="tab-btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-decompress"
+            id="tab-decompress"
+            onclick="switchTab('decompress')"
+          >
+            <svg
+              class="tab-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <polyline points="14 4 14 10 20 10" />
+              <polyline points="10 20 10 14 4 14" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            <span>Dekompresi</span>
           </button>
         </div>
 
@@ -488,6 +536,163 @@
             <div class="result-body" id="decode-result-body"></div>
           </div>
         </div>
+        <!-- COMPRESS PANEL -->
+        <div
+          class="tab-panel"
+          id="panel-compress"
+          role="tabpanel"
+          aria-labelledby="tab-compress"
+          hidden
+        >
+          <p class="section-label">Gambar untuk Dikompresi</p>
+          <div
+            class="upload-zone"
+            id="compress-dropzone"
+            ondragover="handleDrag(event, true, 'compress-dropzone')"
+            ondragleave="handleDrag(event, false, 'compress-dropzone')"
+            ondrop="handleDrop(event, 'compress')"
+            tabindex="0"
+            role="button"
+            aria-label="Area unggah gambar untuk kompresi. Seret dan lepas atau klik untuk memilih file."
+          >
+            <input
+              type="file"
+              accept="image/png,image/bmp,image/gif,image/jpeg,image/webp"
+              onchange="handleFileCompress(event)"
+              id="compress-file-input"
+              tabindex="-1"
+              aria-hidden="true"
+            />
+            <div class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <polyline points="4 14 10 14 10 20" />
+                <polyline points="20 10 14 10 14 4" />
+                <line x1="14" y1="10" x2="21" y2="3" />
+                <line x1="3" y1="21" x2="10" y2="14" />
+              </svg>
+            </div>
+            <h3>Seret gambar ke sini atau <span class="link">klik untuk memilih</span></h3>
+            <p>Format: PNG, BMP, GIF, JPG, WebP &middot; Semua pemrosesan terjadi di browser</p>
+          </div>
+
+          <div class="preview-wrap" id="compress-preview-wrap" hidden>
+            <img id="compress-preview-img" src="" alt="Preview gambar yang diunggah" />
+            <button class="preview-remove" onclick="removeImageCompress()" aria-label="Hapus gambar">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              Hapus
+            </button>
+          </div>
+
+          <div class="field-group" id="compress-options" hidden>
+            <label for="compress-quality">Kualitas WebP</label>
+            <div class="compress-quality-row">
+              <input type="range" id="compress-quality" min="1" max="95" value="80" oninput="updateQualityLabel()" />
+              <span class="quality-label" id="quality-label-val">80%</span>
+            </div>
+            <p class="compress-hint">Semakin rendah kualitas, semakin kecil ukuran file. Nilai 70–85% biasanya optimal untuk foto.</p>
+            <p class="compress-hint" id="input-format-hint" hidden></p>
+          </div>
+
+          <hr class="divider" id="compress-divider" hidden />
+
+          <button class="btn-primary" onclick="compressImage()" id="btn-compress" hidden>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <polyline points="4 14 10 14 10 20" />
+              <polyline points="20 10 14 10 14 4" />
+              <line x1="14" y1="10" x2="21" y2="3" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            <span>Kompresi ke WebP</span>
+            <div class="spinner" id="compress-spinner" aria-hidden="true"></div>
+          </button>
+
+          <div class="progress-bar" id="compress-progress" hidden>
+            <div class="progress-fill" id="compress-progress-fill"></div>
+          </div>
+          <div class="result-box" id="compress-result" hidden>
+            <div class="result-header" id="compress-result-header"></div>
+            <div class="result-body" id="compress-result-body"></div>
+          </div>
+        </div>
+
+        <!-- DECOMPRESS PANEL -->
+        <div
+          class="tab-panel"
+          id="panel-decompress"
+          role="tabpanel"
+          aria-labelledby="tab-decompress"
+          hidden
+        >
+          <p class="section-label">File Gambar Terkompresi</p>
+          <div
+            class="upload-zone"
+            id="decompress-dropzone"
+            ondragover="handleDrag(event, true, 'decompress-dropzone')"
+            ondragleave="handleDrag(event, false, 'decompress-dropzone')"
+            ondrop="handleDropDecompress(event)"
+            tabindex="0"
+            role="button"
+            aria-label="Area unggah gambar terkompresi. Seret dan lepas atau klik untuk memilih file."
+          >
+            <input
+              type="file"
+              accept="image/webp,image/png,image/bmp,image/gif,image/jpeg"
+              onchange="handleFileDecompress(event)"
+              id="decompress-file-input"
+              tabindex="-1"
+              aria-hidden="true"
+            />
+            <div class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <polyline points="14 4 14 10 20 10" />
+                <polyline points="10 20 10 14 4 14" />
+                <line x1="21" y1="3" x2="14" y2="10" />
+                <line x1="3" y1="21" x2="10" y2="14" />
+              </svg>
+            </div>
+            <h3>Seret gambar ke sini atau <span class="link">klik untuk memilih</span></h3>
+            <p>Unggah gambar terkompresi untuk dikonversi ke PNG (lossless tanpa metadata)</p>
+          </div>
+
+          <div class="preview-wrap" id="decompress-preview-wrap" hidden>
+            <img id="decompress-preview-img" src="" alt="Preview gambar terkompresi" />
+            <button class="preview-remove" onclick="removeImageDecompress()" aria-label="Hapus gambar">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              Hapus
+            </button>
+          </div>
+
+          <div class="decompress-info" id="decompress-info" hidden>
+            <div class="dinfo-row"><span class="dinfo-label">Format asli</span><span id="dinfo-format">—</span></div>
+            <div class="dinfo-row"><span class="dinfo-label">Dimensi</span><span id="dinfo-dims">—</span></div>
+            <div class="dinfo-row"><span class="dinfo-label">Ukuran file</span><span id="dinfo-size">—</span></div>
+          </div>
+
+          <hr class="divider" id="decompress-divider" hidden />
+
+          <button class="btn-primary" onclick="decompressImage()" id="btn-decompress" hidden>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <polyline points="14 4 14 10 20 10" />
+              <polyline points="10 20 10 14 4 14" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            <span>Dekompres ke PNG</span>
+            <div class="spinner" id="decompress-spinner" aria-hidden="true"></div>
+          </button>
+
+          <div class="progress-bar" id="decompress-progress" hidden>
+            <div class="progress-fill" id="decompress-progress-fill"></div>
+          </div>
+          <div class="result-box" id="decompress-result" hidden>
+            <div class="result-header" id="decompress-result-header"></div>
+            <div class="result-body" id="decompress-result-body"></div>
+          </div>
+        </div>
       </div>
       <!-- /tabs-wrapper -->
 
@@ -551,6 +756,26 @@
           <p>
             Tambahkan lapisan keamanan dengan kata sandi XOR cipher agar hanya
             penerima yang memiliki kunci bisa membaca.
+          </p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            >
+              <polyline points="4 14 10 14 10 20" />
+              <polyline points="20 10 14 10 14 4" />
+              <line x1="14" y1="10" x2="21" y2="3" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+          </div>
+          <h3>Kompresi Gambar</h3>
+          <p>
+            Kompres gambar apa pun ke WebP lossy untuk ukuran file yang jauh lebih kecil, atau dekompres/konversi ke PNG lossless — semua di browser tanpa upload ke server.
           </p>
         </div>
       </div>

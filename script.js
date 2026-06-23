@@ -39,7 +39,7 @@ const state = {
    TAB SWITCH
 ════════════════════════════════════════ */
 function switchTab(tab) {
-  ["encode", "decode"].forEach(function (t) {
+  ["encode", "decode", "compress", "decompress"].forEach(function (t) {
     const panel = document.getElementById("panel-" + t);
     const btn = document.getElementById("tab-" + t);
     const isActive = t === tab;
@@ -69,6 +69,24 @@ function handleDrop(e, mode) {
 function handleFile(e, mode) {
   const file = e.target.files[0];
   if (file) processFile(file, mode);
+}
+
+/* compress/decompress use dedicated handlers (wider format support) */
+function handleFileCompress(e) {
+  const file = e.target.files[0];
+  if (file) processFileCompress(file);
+}
+
+function handleFileDecompress(e) {
+  const file = e.target.files[0];
+  if (file) processFileDecompress(file);
+}
+
+function handleDropDecompress(e) {
+  e.preventDefault();
+  document.getElementById("decompress-dropzone").classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (file) processFileDecompress(file);
 }
 
 /* ════════════════════════════════════════
@@ -802,4 +820,547 @@ function togglePw(inputId, btn) {
     "aria-label",
     isHidden ? "Sembunyikan kata sandi" : "Tampilkan kata sandi",
   );
+}
+
+/* ════════════════════════════════════════
+   COMPRESS STATE
+════════════════════════════════════════ */
+const compressState = {
+  file: null,
+  img: null,
+};
+
+const decompressState = {
+  file: null,
+  img: null,
+};
+
+/* ════════════════════════════════════════
+   COMPRESS — PROCESS FILE
+════════════════════════════════════════ */
+function processFileCompress(file) {
+  if (!file.type.match(/image\/(png|bmp|gif|jpeg|webp)/)) {
+    alert("Format tidak didukung. Gunakan PNG, BMP, GIF, JPG, atau WebP.");
+    return;
+  }
+  compressState.file = file;
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const img = new Image();
+    img.onload = function () {
+      compressState.img = img;
+      document.getElementById("compress-preview-img").src = ev.target.result;
+      document.getElementById("compress-preview-wrap").removeAttribute("hidden");
+      document.getElementById("compress-options").removeAttribute("hidden");
+      document.getElementById("compress-divider").removeAttribute("hidden");
+      document.getElementById("btn-compress").removeAttribute("hidden");
+      document.getElementById("compress-result").setAttribute("hidden", "");
+
+      // Show input info badge
+      const fmt = (file.type.split("/")[1] || "").toUpperCase();
+      const kb = file.size < 1024 * 1024
+        ? (file.size / 1024).toFixed(1) + " KB"
+        : (file.size / (1024 * 1024)).toFixed(2) + " MB";
+      const hint = document.getElementById("input-format-hint");
+      if (hint) {
+        hint.textContent = "Input: " + fmt + " · " + kb + " · " + img.naturalWidth + "×" + img.naturalHeight + " px — Output: WebP Lossy";
+        hint.className = "compress-hint compress-hint-ok";
+        hint.removeAttribute("hidden");
+      }
+
+      // Sync quality label
+      updateQualityLabel();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImageCompress() {
+  compressState.file = null;
+  compressState.img = null;
+  document.getElementById("compress-preview-wrap").setAttribute("hidden", "");
+  document.getElementById("compress-file-input").value = "";
+  document.getElementById("compress-options").setAttribute("hidden", "");
+  document.getElementById("compress-divider").setAttribute("hidden", "");
+  document.getElementById("btn-compress").setAttribute("hidden", "");
+  document.getElementById("compress-result").setAttribute("hidden", "");
+  const hint = document.getElementById("input-format-hint");
+  if (hint) hint.setAttribute("hidden", "");
+}
+
+function updateQualityLabel() {
+  const val = document.getElementById("compress-quality").value;
+  document.getElementById("quality-label-val").textContent = val + "%";
+}
+
+/* ════════════════════════════════════════
+   COMPRESS — RUN (always output WebP)
+════════════════════════════════════════ */
+function compressImage() {
+  if (!compressState.img) return;
+
+  document.getElementById("btn-compress").disabled = true;
+  document.getElementById("compress-spinner").style.display = "block";
+
+  simulateProgress("compress-progress", "compress-progress-fill", function () {
+    const img = compressState.img;
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    const quality = parseInt(document.getElementById("compress-quality").value) / 100;
+    const origSize = compressState.file.size;
+    const origName = compressState.file.name.replace(/\.[^.]+$/, "");
+
+    const formatSize = function (bytes) {
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    };
+
+    // Always export as WebP — the only format that genuinely compresses in-browser
+    canvas.toBlob(function (blob) {
+      const newSize = blob.size;
+      const saved = origSize - newSize;
+      const pct = ((saved / origSize) * 100).toFixed(1);
+      const reduced = newSize < origSize;
+      const url = URL.createObjectURL(blob);
+      const thumb = canvas.toDataURL("image/jpeg", 0.5);
+
+      const box = document.getElementById("compress-result");
+      const header = document.getElementById("compress-result-header");
+      const body = document.getElementById("compress-result-body");
+      box.removeAttribute("hidden");
+
+      if (reduced) {
+        box.className = "result-box success";
+        header.textContent = "Kompresi berhasil — ukuran berkurang " + pct + "%";
+      } else {
+        // File got bigger (rare, e.g. tiny PNG with few colors)
+        // Retry with lower quality to force smaller
+        box.className = "result-box warn";
+        header.textContent = "Kualitas " + Math.round(quality * 100) + "% masih besar — coba turunkan slider kualitas";
+      }
+
+      body.innerHTML =
+        '<div class="download-area">' +
+        '<img src="' + thumb + '" class="result-img-thumb" alt="Thumbnail hasil kompresi" />' +
+        '<div class="download-info">' +
+        '<div class="compress-stats">' +
+        '<div class="cstat"><span class="cstat-label">Sebelum</span><span class="cstat-val">' + formatSize(origSize) + '</span></div>' +
+        '<div class="cstat-arrow">→</div>' +
+        '<div class="cstat"><span class="cstat-label">Sesudah</span><span class="cstat-val cstat-new">' + formatSize(newSize) + '</span></div>' +
+        '<div class="cstat cstat-pct ' + (reduced ? "cstat-saved" : "cstat-neutral") + '"><span class="cstat-label">Perubahan</span><span class="cstat-val">' + (reduced ? "−" + pct + "%" : "+" + Math.abs(pct) + "%") + '</span></div>' +
+        '</div>' +
+        '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.6rem;">Format: <strong>WebP</strong> · Kualitas: <strong>' + Math.round(quality * 100) + '%</strong> · Dimensi: <strong>' + img.naturalWidth + '×' + img.naturalHeight + '</strong></p>' +
+        '<a href="' + url + '" download="' + origName + '_compressed.webp" class="btn-download">' +
+        svgDownload() + ' Unduh WebP Terkompresi' +
+        '</a>' +
+        '</div>' +
+        '</div>';
+
+      document.getElementById("btn-compress").disabled = false;
+      document.getElementById("compress-spinner").style.display = "none";
+    }, "image/webp", quality);
+  });
+}
+
+/* ════════════════════════════════════════
+   DECOMPRESS — PROCESS FILE
+════════════════════════════════════════ */
+function processFileDecompress(file) {
+  decompressState.file = file;
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const img = new Image();
+    img.onload = function () {
+      decompressState.img = img;
+      document.getElementById("decompress-preview-img").src = ev.target.result;
+      document.getElementById("decompress-preview-wrap").removeAttribute("hidden");
+
+      document.getElementById("decompress-info").removeAttribute("hidden");
+      const fmt = (file.type.split("/")[1] || "?").toUpperCase();
+      document.getElementById("dinfo-format").textContent = fmt;
+      document.getElementById("dinfo-dims").textContent = img.naturalWidth + " × " + img.naturalHeight + " px";
+      const sz = file.size >= 1024 * 1024
+        ? (file.size / (1024 * 1024)).toFixed(2) + " MB"
+        : (file.size / 1024).toFixed(1) + " KB";
+      document.getElementById("dinfo-size").textContent = sz;
+
+      document.getElementById("decompress-divider").removeAttribute("hidden");
+      document.getElementById("btn-decompress").removeAttribute("hidden");
+      document.getElementById("decompress-result").setAttribute("hidden", "");
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImageDecompress() {
+  decompressState.file = null;
+  decompressState.img = null;
+  document.getElementById("decompress-preview-wrap").setAttribute("hidden", "");
+  document.getElementById("decompress-file-input").value = "";
+  document.getElementById("decompress-info").setAttribute("hidden", "");
+  document.getElementById("decompress-divider").setAttribute("hidden", "");
+  document.getElementById("btn-decompress").setAttribute("hidden", "");
+  document.getElementById("decompress-result").setAttribute("hidden", "");
+}
+
+/* ════════════════════════════════════════
+   DECOMPRESS — RUN → PNG lossless
+════════════════════════════════════════ */
+function decompressImage() {
+  if (!decompressState.img) return;
+
+  document.getElementById("btn-decompress").disabled = true;
+  document.getElementById("decompress-spinner").style.display = "block";
+
+  simulateProgress("decompress-progress", "decompress-progress-fill", function () {
+    const img = decompressState.img;
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    const origName = decompressState.file.name.replace(/\.[^.]+$/, "");
+
+    canvas.toBlob(function (blob) {
+      const newSize = blob.size;
+      const url = URL.createObjectURL(blob);
+      const thumb = canvas.toDataURL("image/jpeg", 0.5);
+
+      const formatSize = function (bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+      };
+
+      const box = document.getElementById("decompress-result");
+      const header = document.getElementById("decompress-result-header");
+      const body = document.getElementById("decompress-result-body");
+      box.removeAttribute("hidden");
+      box.className = "result-box success";
+      header.textContent = "Dekompresi berhasil — gambar dikonversi ke PNG lossless";
+
+      body.innerHTML =
+        '<div class="download-area">' +
+        '<img src="' + thumb + '" class="result-img-thumb" alt="Thumbnail hasil dekompresi" />' +
+        '<div class="download-info">' +
+        '<div class="compress-stats">' +
+        '<div class="cstat"><span class="cstat-label">Format asal</span><span class="cstat-val">' + (decompressState.file.type.split("/")[1] || "?").toUpperCase() + '</span></div>' +
+        '<div class="cstat-arrow">→</div>' +
+        '<div class="cstat"><span class="cstat-label">Format baru</span><span class="cstat-val cstat-new">PNG</span></div>' +
+        '<div class="cstat cstat-pct cstat-neutral"><span class="cstat-label">Ukuran baru</span><span class="cstat-val">' + formatSize(newSize) + '</span></div>' +
+        '</div>' +
+        '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.6rem;">PNG lossless · Dimensi: <strong>' + img.naturalWidth + '×' + img.naturalHeight + '</strong> · Semua piksel dipertahankan penuh</p>' +
+        '<a href="' + url + '" download="' + origName + '_decompressed.png" class="btn-download">' +
+        svgDownload() + ' Unduh PNG Lossless' +
+        '</a>' +
+        '</div>' +
+        '</div>';
+
+      document.getElementById("btn-decompress").disabled = false;
+      document.getElementById("decompress-spinner").style.display = "none";
+    }, "image/png");
+  });
+}
+
+
+/* ════════════════════════════════════════
+   COMPRESS — PROCESS FILE
+════════════════════════════════════════ */
+function processFileCompress(file) {
+  if (!file.type.match(/image\/(png|bmp|gif|jpeg|jpg|webp)/)) {
+    alert("Format tidak didukung. Gunakan PNG, BMP, GIF, JPG, atau WebP.");
+    return;
+  }
+  compressState.file = file;
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const img = new Image();
+    img.onload = function () {
+      compressState.img = img;
+      document.getElementById("compress-preview-img").src = ev.target.result;
+      document.getElementById("compress-preview-wrap").removeAttribute("hidden");
+      document.getElementById("compress-options").removeAttribute("hidden");
+      document.getElementById("compress-divider").removeAttribute("hidden");
+      document.getElementById("btn-compress").removeAttribute("hidden");
+      document.getElementById("compress-result").setAttribute("hidden", "");
+
+      // Auto-detect: if input is JPEG/WebP (already lossy), steer to WebP
+      const isLossy = file.type === "image/jpeg" || file.type === "image/webp";
+      if (isLossy && compressState.method === "png") {
+        selectMethod("webp");
+      }
+
+      // Show format hint
+      updateFormatHint(file.type);
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateFormatHint(mimeType) {
+  const hint = document.getElementById("input-format-hint");
+  if (!hint) return;
+  const isLossy = mimeType === "image/jpeg" || mimeType === "image/webp";
+  const fmt = mimeType.split("/")[1].toUpperCase();
+  if (isLossy) {
+    hint.textContent = "⚠ Input " + fmt + " sudah terkompresi lossy. Pilih WebP untuk hasil lebih kecil — PNG justru akan memperbesar ukuran.";
+    hint.className = "compress-hint compress-hint-warn";
+    hint.removeAttribute("hidden");
+  } else {
+    hint.textContent = "✓ Input " + fmt + " — kedua metode kompresi tersedia.";
+    hint.className = "compress-hint compress-hint-ok";
+    hint.removeAttribute("hidden");
+  }
+}
+
+function removeImageCompress() {
+  compressState.file = null;
+  compressState.img = null;
+  document.getElementById("compress-preview-wrap").setAttribute("hidden", "");
+  document.getElementById("compress-file-input").value = "";
+  document.getElementById("compress-options").setAttribute("hidden", "");
+  document.getElementById("compress-divider").setAttribute("hidden", "");
+  document.getElementById("btn-compress").setAttribute("hidden", "");
+  document.getElementById("compress-result").setAttribute("hidden", "");
+  const hint = document.getElementById("input-format-hint");
+  if (hint) hint.setAttribute("hidden", "");
+}
+
+function updateQualityLabel() {
+  const val = document.getElementById("compress-quality").value;
+  document.getElementById("quality-label-val").textContent = val + "%";
+}
+
+function selectMethod(method) {
+  // Block PNG if input is already lossy
+  if (method === "png" && compressState.file) {
+    const isLossy = compressState.file.type === "image/jpeg" || compressState.file.type === "image/webp";
+    if (isLossy) {
+      // Don't switch — show warning instead
+      const hint = document.getElementById("input-format-hint");
+      if (hint) {
+        hint.textContent = "⚠ PNG tidak disarankan untuk input JPEG/WebP — ukuran akan membesar. Gunakan WebP Lossy.";
+        hint.className = "compress-hint compress-hint-warn";
+      }
+      return;
+    }
+  }
+
+  compressState.method = method;
+  document.getElementById("method-webp").classList.toggle("active", method === "webp");
+  document.getElementById("method-png").classList.toggle("active", method === "png");
+  const hint = document.getElementById("method-hint");
+  const qualityRow = document.querySelector(".compress-quality-row");
+  const qualityLabel = document.querySelector('[for="compress-quality"]');
+  if (method === "png") {
+    hint.textContent = "PNG lossless mempertahankan kualitas piksel sempurna — ukuran file lebih besar namun tanpa penurunan kualitas.";
+    qualityRow.style.opacity = "0.3";
+    qualityRow.style.pointerEvents = "none";
+    if (qualityLabel) qualityLabel.style.opacity = "0.3";
+  } else {
+    hint.textContent = "WebP lossy menghasilkan file jauh lebih kecil, cocok untuk web dan berbagi foto.";
+    qualityRow.style.opacity = "";
+    qualityRow.style.pointerEvents = "";
+    if (qualityLabel) qualityLabel.style.opacity = "";
+  }
+}
+
+/* ════════════════════════════════════════
+   COMPRESS — RUN
+════════════════════════════════════════ */
+function compressImage() {
+  if (!compressState.img) return;
+
+  document.getElementById("btn-compress").disabled = true;
+  document.getElementById("compress-spinner").style.display = "block";
+
+  simulateProgress("compress-progress", "compress-progress-fill", function () {
+    const img = compressState.img;
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    const method = compressState.method;
+    const quality = parseInt(document.getElementById("compress-quality").value) / 100;
+    const mimeType = method === "png" ? "image/png" : "image/webp";
+    const ext = method === "png" ? "png" : "webp";
+
+    const origSize = compressState.file.size;
+    const origName = compressState.file.name.replace(/\.[^.]+$/, "");
+
+    canvas.toBlob(function (blob) {
+      const newSize = blob.size;
+      const ratio = ((1 - newSize / origSize) * 100).toFixed(1);
+      const saved = ratio > 0;
+      const url = URL.createObjectURL(blob);
+      const thumb = canvas.toDataURL("image/jpeg", 0.5);
+
+      const formatSize = function (bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+      };
+
+      const box = document.getElementById("compress-result");
+      const header = document.getElementById("compress-result-header");
+      const body = document.getElementById("compress-result-body");
+
+      box.removeAttribute("hidden");
+
+      let headerText, boxClass;
+      if (saved) {
+        headerText = "Kompresi berhasil — ukuran berkurang " + ratio + "%";
+        boxClass = "result-box success";
+      } else if (newSize > origSize) {
+        headerText = "⚠ Ukuran bertambah — format PNG tidak cocok untuk input ini";
+        boxClass = "result-box error";
+      } else {
+        headerText = "Kompresi selesai (ukuran hampir sama)";
+        boxClass = "result-box warn";
+      }
+
+      box.className = boxClass;
+      header.textContent = headerText;
+
+      const inflationNote = newSize > origSize
+        ? '<p style="font-size:0.78rem;color:var(--error-text);margin-top:0.5rem;line-height:1.5;">PNG menyimpan semua piksel secara lossless, sehingga hasilnya lebih besar dari file JPEG/WebP asli. Gunakan <strong>WebP Lossy</strong> untuk mengompres file JPEG.</p>'
+        : "";
+
+      body.innerHTML =
+        '<div class="download-area">' +
+        '<img src="' + thumb + '" class="result-img-thumb" alt="Thumbnail hasil kompresi" />' +
+        '<div class="download-info">' +
+        '<div class="compress-stats">' +
+        '<div class="cstat"><span class="cstat-label">Sebelum</span><span class="cstat-val">' + formatSize(origSize) + '</span></div>' +
+        '<div class="cstat-arrow">→</div>' +
+        '<div class="cstat"><span class="cstat-label">Sesudah</span><span class="cstat-val cstat-new">' + formatSize(newSize) + '</span></div>' +
+        '<div class="cstat cstat-pct ' + (saved ? "cstat-saved" : "cstat-neutral") + '"><span class="cstat-label">Perubahan</span><span class="cstat-val">' + (saved ? "−" + ratio + "%" : "+" + Math.abs(ratio) + "%") + '</span></div>' +
+        '</div>' +
+        inflationNote +
+        '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.6rem;">Format: <strong>' + ext.toUpperCase() + '</strong> · Dimensi: <strong>' + img.naturalWidth + '×' + img.naturalHeight + '</strong></p>' +
+        '<a href="' + url + '" download="' + origName + '_compressed.' + ext + '" class="btn-download">' +
+        svgDownload() + ' Unduh Gambar Terkompresi' +
+        '</a>' +
+        '</div>' +
+        '</div>';
+
+      document.getElementById("btn-compress").disabled = false;
+      document.getElementById("compress-spinner").style.display = "none";
+    }, mimeType, method === "png" ? undefined : quality);
+  });
+}
+
+/* ════════════════════════════════════════
+   DECOMPRESS — PROCESS FILE
+════════════════════════════════════════ */
+function processFileDecompress(file) {
+  decompressState.file = file;
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const img = new Image();
+    img.onload = function () {
+      decompressState.img = img;
+      document.getElementById("decompress-preview-img").src = ev.target.result;
+      document.getElementById("decompress-preview-wrap").removeAttribute("hidden");
+
+      // Show file info
+      document.getElementById("decompress-info").removeAttribute("hidden");
+      const fmt = file.type.split("/")[1].toUpperCase();
+      document.getElementById("dinfo-format").textContent = fmt || "Unknown";
+      document.getElementById("dinfo-dims").textContent = img.naturalWidth + " × " + img.naturalHeight + " px";
+      const kb = (file.size / 1024).toFixed(1);
+      const mb = (file.size / (1024 * 1024)).toFixed(2);
+      document.getElementById("dinfo-size").textContent = file.size >= 1024 * 1024 ? mb + " MB" : kb + " KB";
+
+      document.getElementById("decompress-divider").removeAttribute("hidden");
+      document.getElementById("btn-decompress").removeAttribute("hidden");
+      document.getElementById("decompress-result").setAttribute("hidden", "");
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImageDecompress() {
+  decompressState.file = null;
+  decompressState.img = null;
+  document.getElementById("decompress-preview-wrap").setAttribute("hidden", "");
+  document.getElementById("decompress-file-input").value = "";
+  document.getElementById("decompress-info").setAttribute("hidden", "");
+  document.getElementById("decompress-divider").setAttribute("hidden", "");
+  document.getElementById("btn-decompress").setAttribute("hidden", "");
+  document.getElementById("decompress-result").setAttribute("hidden", "");
+}
+
+/* ════════════════════════════════════════
+   DECOMPRESS — RUN (render to lossless PNG)
+════════════════════════════════════════ */
+function decompressImage() {
+  if (!decompressState.img) return;
+
+  document.getElementById("btn-decompress").disabled = true;
+  document.getElementById("decompress-spinner").style.display = "block";
+
+  simulateProgress("decompress-progress", "decompress-progress-fill", function () {
+    const img = decompressState.img;
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    const origName = decompressState.file.name.replace(/\.[^.]+$/, "");
+    const origSize = decompressState.file.size;
+
+    canvas.toBlob(function (blob) {
+      const newSize = blob.size;
+      const url = URL.createObjectURL(blob);
+      const thumb = canvas.toDataURL("image/jpeg", 0.5);
+
+      const formatSize = function (bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+      };
+
+      const box = document.getElementById("decompress-result");
+      const header = document.getElementById("decompress-result-header");
+      const body = document.getElementById("decompress-result-body");
+
+      box.removeAttribute("hidden");
+      box.className = "result-box success";
+      header.textContent = "Dekompresi berhasil — gambar dikonversi ke PNG lossless";
+
+      body.innerHTML =
+        '<div class="download-area">' +
+        '<img src="' + thumb + '" class="result-img-thumb" alt="Thumbnail hasil dekompresi" />' +
+        '<div class="download-info">' +
+        '<div class="compress-stats">' +
+        '<div class="cstat"><span class="cstat-label">Format asal</span><span class="cstat-val">' + (decompressState.file.type.split("/")[1] || "?").toUpperCase() + '</span></div>' +
+        '<div class="cstat-arrow">→</div>' +
+        '<div class="cstat"><span class="cstat-label">Format baru</span><span class="cstat-val cstat-new">PNG</span></div>' +
+        '<div class="cstat cstat-pct cstat-neutral"><span class="cstat-label">Ukuran</span><span class="cstat-val">' + formatSize(newSize) + '</span></div>' +
+        '</div>' +
+        '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.6rem;">PNG lossless · Dimensi: <strong>' + img.naturalWidth + '×' + img.naturalHeight + '</strong> · Semua piksel dipertahankan</p>' +
+        '<a href="' + url + '" download="' + origName + '_decompressed.png" class="btn-download">' +
+        svgDownload() + ' Unduh PNG Lossless' +
+        '</a>' +
+        '</div>' +
+        '</div>';
+
+      document.getElementById("btn-decompress").disabled = false;
+      document.getElementById("decompress-spinner").style.display = "none";
+    }, "image/png");
+  });
 }
