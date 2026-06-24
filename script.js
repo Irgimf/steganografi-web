@@ -619,11 +619,11 @@ function runMultiModeScan() {
         allResults.push(r);
         addLog(
           mode.label +
-            " — " +
-            (r.ratio * 100).toFixed(0) +
-            "% (" +
-            r.length +
-            " kar)",
+          " — " +
+          (r.ratio * 100).toFixed(0) +
+          "% (" +
+          r.length +
+          " kar)",
           true,
         );
       } else {
@@ -640,11 +640,11 @@ function runMultiModeScan() {
         allResults.push(r);
         addLog(
           r.mode +
-            " — " +
-            (r.ratio * 100).toFixed(0) +
-            "% (" +
-            r.length +
-            " kar)",
+          " — " +
+          (r.ratio * 100).toFixed(0) +
+          "% (" +
+          r.length +
+          " kar)",
           true,
         );
       });
@@ -726,12 +726,12 @@ function runMultiModeScan() {
         "</button>" +
         (r.text.length > 200
           ? '<button class="copy-btn" onclick="expandMmResult(' +
-            idx +
-            ",'" +
-            id +
-            '\')" id="btn-exp-' +
-            idx +
-            '">Lihat semua</button>'
+          idx +
+          ",'" +
+          id +
+          '\')" id="btn-exp-' +
+          idx +
+          '">Lihat semua</button>'
           : "") +
         "</div>" +
         "</div>";
@@ -1112,11 +1112,11 @@ function updateFormatHint(mimeType) {
   const isLossy = mimeType === "image/jpeg" || mimeType === "image/webp";
   const fmt = mimeType.split("/")[1].toUpperCase();
   if (isLossy) {
-    hint.textContent = "⚠ Input " + fmt + " sudah terkompresi lossy. Pilih WebP untuk hasil lebih kecil — PNG justru akan memperbesar ukuran.";
+    hint.textContent = "⚠ Input " + fmt + " sudah terkompresi lossy. Hasil akan dikonversi ke format WebP.";
     hint.className = "compress-hint compress-hint-warn";
     hint.removeAttribute("hidden");
   } else {
-    hint.textContent = "✓ Input " + fmt + " — kedua metode kompresi tersedia.";
+    hint.textContent = "✓ Input " + fmt + " — siap dikompresi ke format WebP.";
     hint.className = "compress-hint compress-hint-ok";
     hint.removeAttribute("hidden");
   }
