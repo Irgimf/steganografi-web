@@ -93,6 +93,11 @@ function handleDropDecompress(e) {
    PROCESS FILE
 ════════════════════════════════════════ */
 function processFile(file, mode) {
+  const MAX_MB = 5;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showCustomAlert("Ukuran gambar terlalu besar! Maksimal " + MAX_MB + " MB.");
+    return;
+  }
   if (!file.type.match(/image\/(png|bmp|gif)/)) {
     showResult(
       mode,
@@ -839,8 +844,13 @@ const decompressState = {
    COMPRESS — PROCESS FILE
 ════════════════════════════════════════ */
 function processFileCompress(file) {
+  const MAX_MB = 5;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showCustomAlert("Ukuran gambar terlalu besar! Maksimal " + MAX_MB + " MB.");
+    return;
+  }
   if (!file.type.match(/image\/(png|bmp|gif|jpeg|webp)/)) {
-    alert("Format tidak didukung. Gunakan PNG, BMP, GIF, JPG, atau WebP.");
+    showCustomAlert("Format tidak didukung. Gunakan PNG, BMP, GIF, JPG, atau WebP.", "Format Salah");
     return;
   }
   compressState.file = file;
@@ -972,6 +982,11 @@ function compressImage() {
    DECOMPRESS — PROCESS FILE
 ════════════════════════════════════════ */
 function processFileDecompress(file) {
+  const MAX_MB = 5;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showCustomAlert("Ukuran gambar terlalu besar! Maksimal " + MAX_MB + " MB.");
+    return;
+  }
   decompressState.file = file;
   const reader = new FileReader();
   reader.onload = function (ev) {
@@ -1075,8 +1090,13 @@ function decompressImage() {
    COMPRESS — PROCESS FILE
 ════════════════════════════════════════ */
 function processFileCompress(file) {
+  const MAX_MB = 5;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showCustomAlert("Ukuran gambar terlalu besar! Maksimal " + MAX_MB + " MB.");
+    return;
+  }
   if (!file.type.match(/image\/(png|bmp|gif|jpeg|jpg|webp)/)) {
-    alert("Format tidak didukung. Gunakan PNG, BMP, GIF, JPG, atau WebP.");
+    showCustomAlert("Format tidak didukung. Gunakan PNG, BMP, GIF, JPG, atau WebP.", "Format Salah");
     return;
   }
   compressState.file = file;
@@ -1265,6 +1285,11 @@ function compressImage() {
    DECOMPRESS — PROCESS FILE
 ════════════════════════════════════════ */
 function processFileDecompress(file) {
+  const MAX_MB = 5;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showCustomAlert("Ukuran gambar terlalu besar! Maksimal " + MAX_MB + " MB.");
+    return;
+  }
   decompressState.file = file;
   const reader = new FileReader();
   reader.onload = function (ev) {
@@ -1363,4 +1388,31 @@ function decompressImage() {
       document.getElementById("decompress-spinner").style.display = "none";
     }, "image/png");
   });
+}
+
+/* ════════════════════════════════════════
+   CUSTOM MODAL ALERT
+════════════════════════════════════════ */
+function showCustomAlert(msg, title) {
+  title = title || "Perhatian";
+  const backdrop = document.getElementById("custom-alert");
+  const titleEl = document.getElementById("custom-alert-title");
+  const msgEl = document.getElementById("custom-alert-msg");
+  if (titleEl) titleEl.textContent = title;
+  if (msgEl) msgEl.textContent = msg;
+  if (backdrop) {
+    backdrop.removeAttribute("hidden");
+    void backdrop.offsetWidth; // force reflow
+    backdrop.classList.add("show");
+  }
+}
+
+function closeCustomAlert() {
+  const backdrop = document.getElementById("custom-alert");
+  if (backdrop) {
+    backdrop.classList.remove("show");
+    setTimeout(function () {
+      backdrop.setAttribute("hidden", "");
+    }, 300);
+  }
 }

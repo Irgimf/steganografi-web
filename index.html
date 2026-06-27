@@ -1,796 +1,455 @@
 <!doctype html>
 <html lang="id" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SteganografiWEB — Sembunyikan Pesan dalam Gambar</title>
-    <meta
-      name="description"
-      content="Sembunyikan atau baca pesan rahasia dalam gambar menggunakan teknik steganografi LSB."
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="grid-bg" aria-hidden="true"></div>
 
-    <div class="container">
-      <!-- HEADER -->
-      <header>
-        <div class="header-top">
-          <div class="logo-badge">
-            <span class="pulse-dot" aria-hidden="true"></span>
-            Steganografi LSB
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SteganografiWEB — Sembunyikan Pesan dalam Gambar</title>
+  <meta name="description"
+    content="Sembunyikan atau baca pesan rahasia dalam gambar menggunakan teknik steganografi LSB." />
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-          <!-- ANIMATED THEME TOGGLE SWITCH -->
-          <button
-            class="theme-switch"
-            id="theme-toggle"
-            role="switch"
-            aria-checked="false"
-            aria-label="Ganti tema gelap / terang"
-          >
-            <span class="switch-track">
-              <span class="switch-icon switch-icon--moon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                >
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              </span>
-              <span class="switch-icon switch-icon--sun" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                >
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-              </span>
-              <span class="switch-thumb" aria-hidden="true"></span>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="header-top">
+        <div class="logo-badge">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          Steganografi LSB
+        </div>
+
+        <!-- ANIMATED THEME TOGGLE SWITCH -->
+        <button class="theme-switch" id="theme-toggle" role="switch" aria-checked="false"
+          aria-label="Ganti tema gelap / terang">
+          <span class="switch-track">
+            <span class="switch-icon switch-icon--moon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
             </span>
-            <span class="switch-label" id="theme-label">Mode Terang</span>
-          </button>
-        </div>
-
-        <h1>
-          <span class="title-normal">Steganografi </span
-          ><span class="title-glitch" data-text="WEB">WEB</span>
-        </h1>
-        <p class="subtitle">
-          Sembunyikan pesan rahasia di dalam gambar &mdash; tak terlihat mata,
-          hanya bisa dibaca dengan kunci yang tepat.
-        </p>
-      </header>
-
-      <!-- HOW IT WORKS -->
-      <div class="how-strip" aria-label="Cara penggunaan">
-        <div class="how-step">
-          <div class="dot" aria-hidden="true">1</div>
-          <span>Unggah gambar</span>
-        </div>
-        <div class="how-arrow" aria-hidden="true">&#8594;</div>
-        <div class="how-step">
-          <div class="dot" aria-hidden="true">2</div>
-          <span>Tulis pesan / Pilih opsi</span>
-        </div>
-        <div class="how-arrow" aria-hidden="true">&#8594;</div>
-        <div class="how-step">
-          <div class="dot" aria-hidden="true">3</div>
-          <span>Enkode / Dekode / Kompresi</span>
-        </div>
-        <div class="how-arrow" aria-hidden="true">&#8594;</div>
-        <div class="how-step">
-          <div class="dot" aria-hidden="true">4</div>
-          <span>Unduh hasil</span>
-        </div>
+            <span class="switch-icon switch-icon--sun" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            </span>
+            <span class="switch-thumb" aria-hidden="true"></span>
+          </span>
+          <span class="switch-label" id="theme-label">Mode Terang</span>
+        </button>
       </div>
 
-      <!-- MAIN CARD -->
-      <div class="tabs-wrapper">
-        <div class="tabs-header" role="tablist">
-          <button
-            class="tab-btn active"
-            role="tab"
-            aria-selected="true"
-            aria-controls="panel-encode"
-            id="tab-encode"
-            onclick="switchTab('encode')"
-          >
-            <svg
-              class="tab-svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      <h1>
+        <span class="title-normal">Steganografi </span><span class="title-glitch" data-text="WEB">WEB</span>
+      </h1>
+      <p class="subtitle">
+        Sembunyikan pesan rahasia di dalam gambar &mdash; tak terlihat mata,
+        hanya bisa dibaca dengan kunci yang tepat.
+      </p>
+    </header>
+
+
+
+    <!-- MAIN CARD -->
+    <div class="tabs-wrapper">
+      <div class="tabs-header" role="tablist">
+        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-encode" id="tab-encode"
+          onclick="switchTab('encode')">
+          <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>Sembunyikan Pesan</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-decode" id="tab-decode"
+          onclick="switchTab('decode')">
+          <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+            <line x1="12" y1="16" x2="12" y2="16.01" />
+          </svg>
+          <span>Baca Pesan</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-compress" id="tab-compress"
+          onclick="switchTab('compress')">
+          <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <polyline points="4 14 10 14 10 20" />
+            <polyline points="20 10 14 10 14 4" />
+            <line x1="14" y1="10" x2="21" y2="3" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+          <span>Kompresi</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-decompress" id="tab-decompress"
+          onclick="switchTab('decompress')">
+          <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <polyline points="14 4 14 10 20 10" />
+            <polyline points="10 20 10 14 4 14" />
+            <line x1="21" y1="3" x2="14" y2="10" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+          <span>Dekompresi</span>
+        </button>
+      </div>
+
+      <!-- ENCODE PANEL -->
+      <div class="tab-panel active" id="panel-encode" role="tabpanel" aria-labelledby="tab-encode">
+        <p class="section-label">Gambar Pembawa</p>
+        <div class="upload-zone" id="encode-dropzone" ondragover="handleDrag(event, true, 'encode-dropzone')"
+          ondragleave="handleDrag(event, false, 'encode-dropzone')" ondrop="handleDrop(event, 'encode')" tabindex="0"
+          role="button" aria-label="Area unggah gambar. Seret dan lepas atau klik untuk memilih file.">
+          <input type="file" accept="image/png,image/bmp,image/gif" onchange="handleFile(event, 'encode')"
+            id="encode-file-input" tabindex="-1" aria-hidden="true" />
+          <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
             </svg>
-            <span>Sembunyikan Pesan</span>
-          </button>
-          <button
-            class="tab-btn"
-            role="tab"
-            aria-selected="false"
-            aria-controls="panel-decode"
-            id="tab-decode"
-            onclick="switchTab('decode')"
-          >
-            <svg
-              class="tab-svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-              <line x1="12" y1="16" x2="12" y2="16.01" />
+          </div>
+          <h3>
+            Seret gambar ke sini atau
+            <span class="link">klik untuk memilih</span>
+          </h3>
+          <p>
+            Format: PNG, BMP, GIF &middot; Gambar tidak akan berubah secara
+            kasat mata
+          </p>
+        </div>
+
+        <div class="preview-wrap" id="encode-preview-wrap" hidden>
+          <img id="encode-preview-img" src="" alt="Preview gambar yang diunggah" />
+          <button class="preview-remove" onclick="removeImage('encode')" aria-label="Hapus gambar">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
-            <span>Baca Pesan</span>
-          </button>
-          <button
-            class="tab-btn"
-            role="tab"
-            aria-selected="false"
-            aria-controls="panel-compress"
-            id="tab-compress"
-            onclick="switchTab('compress')"
-          >
-            <svg
-              class="tab-svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <polyline points="4 14 10 14 10 20" />
-              <polyline points="20 10 14 10 14 4" />
-              <line x1="14" y1="10" x2="21" y2="3" />
-              <line x1="3" y1="21" x2="10" y2="14" />
-            </svg>
-            <span>Kompresi</span>
-          </button>
-          <button
-            class="tab-btn"
-            role="tab"
-            aria-selected="false"
-            aria-controls="panel-decompress"
-            id="tab-decompress"
-            onclick="switchTab('decompress')"
-          >
-            <svg
-              class="tab-svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <polyline points="14 4 14 10 20 10" />
-              <polyline points="10 20 10 14 4 14" />
-              <line x1="21" y1="3" x2="14" y2="10" />
-              <line x1="3" y1="21" x2="10" y2="14" />
-            </svg>
-            <span>Dekompresi</span>
+            Hapus
           </button>
         </div>
 
-        <!-- ENCODE PANEL -->
-        <div
-          class="tab-panel active"
-          id="panel-encode"
-          role="tabpanel"
-          aria-labelledby="tab-encode"
-        >
-          <p class="section-label">Gambar Pembawa</p>
-          <div
-            class="upload-zone"
-            id="encode-dropzone"
-            ondragover="handleDrag(event, true, 'encode-dropzone')"
-            ondragleave="handleDrag(event, false, 'encode-dropzone')"
-            ondrop="handleDrop(event, 'encode')"
-            tabindex="0"
-            role="button"
-            aria-label="Area unggah gambar. Seret dan lepas atau klik untuk memilih file."
-          >
-            <input
-              type="file"
-              accept="image/png,image/bmp,image/gif"
-              onchange="handleFile(event, 'encode')"
-              id="encode-file-input"
-              tabindex="-1"
-              aria-hidden="true"
-            />
-            <div class="upload-icon" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-            </div>
-            <h3>
-              Seret gambar ke sini atau
-              <span class="link">klik untuk memilih</span>
-            </h3>
-            <p>
-              Format: PNG, BMP, GIF &middot; Gambar tidak akan berubah secara
-              kasat mata
-            </p>
+        <div class="capacity-info" id="encode-capacity" hidden>
+          <div class="capacity-row">
+            <span>Kapasitas pesan</span>
+            <span id="capacity-text">0 / 0 karakter</span>
           </div>
-
-          <div class="preview-wrap" id="encode-preview-wrap" hidden>
-            <img
-              id="encode-preview-img"
-              src=""
-              alt="Preview gambar yang diunggah"
-            />
-            <button
-              class="preview-remove"
-              onclick="removeImage('encode')"
-              aria-label="Hapus gambar"
-            >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-              Hapus
-            </button>
+          <div class="capacity-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="capacity-fill" id="capacity-fill"></div>
           </div>
+        </div>
 
-          <div class="capacity-info" id="encode-capacity" hidden>
-            <div class="capacity-row">
-              <span>Kapasitas pesan</span>
-              <span id="capacity-text">0 / 0 karakter</span>
-            </div>
-            <div
-              class="capacity-track"
-              role="progressbar"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow="0"
-            >
-              <div class="capacity-fill" id="capacity-fill"></div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label for="secret-msg">Pesan Rahasia</label>
-            <textarea
-              id="secret-msg"
-              placeholder="Ketik pesan yang ingin disembunyikan..."
-              oninput="
+        <div class="field-group">
+          <label for="secret-msg">Pesan Rahasia</label>
+          <textarea id="secret-msg" placeholder="Ketik pesan yang ingin disembunyikan..." oninput="
                 updateCharCount();
                 updateCapacity();
-              "
-            ></textarea>
-            <div class="char-count">
-              <span id="char-count">0</span> karakter
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label for="encode-pass"
-              >Kata Sandi <span class="optional">(opsional)</span></label
-            >
-            <div class="password-wrap">
-              <input
-                type="password"
-                id="encode-pass"
-                placeholder="Tambahkan lapisan keamanan ekstra..."
-                autocomplete="new-password"
-              />
-              <button
-                class="toggle-pw"
-                onclick="togglePw('encode-pass', this)"
-                aria-label="Tampilkan kata sandi"
-              >
-                <svg
-                  class="eye-icon eye-open"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  aria-hidden="true"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <svg
-                  class="eye-icon eye-closed"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  aria-hidden="true"
-                  style="display: none"
-                >
-                  <path
-                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                  />
-                  <path
-                    d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
-                  />
-                  <line x1="1" y1="1" x2="23" y2="23" />
-                </svg>
-              </button>
-            </div>
-            <p class="field-hint">
-              Jika diisi, penerima harus memasukkan kata sandi yang sama untuk
-              membaca pesan.
-            </p>
-          </div>
-
-          <hr class="divider" />
-
-          <button class="btn-primary" onclick="encodeMessage()" id="btn-encode">
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-            <span>Sembunyikan Pesan dalam Gambar</span>
-            <div class="spinner" id="encode-spinner" aria-hidden="true"></div>
-          </button>
-
-          <div class="progress-bar" id="encode-progress" hidden>
-            <div class="progress-fill" id="encode-progress-fill"></div>
-          </div>
-          <div class="result-box" id="encode-result" hidden>
-            <div class="result-header" id="encode-result-header"></div>
-            <div class="result-body" id="encode-result-body"></div>
+              "></textarea>
+          <div class="char-count">
+            <span id="char-count">0</span> karakter
           </div>
         </div>
 
-        <!-- DECODE PANEL -->
-        <div
-          class="tab-panel"
-          id="panel-decode"
-          role="tabpanel"
-          aria-labelledby="tab-decode"
-          hidden
-        >
-          <p class="section-label">Gambar Berisi Pesan</p>
-          <div
-            class="upload-zone"
-            id="decode-dropzone"
-            ondragover="handleDrag(event, true, 'decode-dropzone')"
-            ondragleave="handleDrag(event, false, 'decode-dropzone')"
-            ondrop="handleDrop(event, 'decode')"
-            tabindex="0"
-            role="button"
-            aria-label="Area unggah gambar stego. Seret dan lepas atau klik untuk memilih file."
-          >
-            <input
-              type="file"
-              accept="image/png,image/bmp,image/gif"
-              onchange="handleFile(event, 'decode')"
-              id="decode-file-input"
-              tabindex="-1"
-              aria-hidden="true"
-            />
-            <div class="upload-icon" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        <div class="field-group">
+          <label for="encode-pass">Kata Sandi <span class="optional">(opsional)</span></label>
+          <div class="password-wrap">
+            <input type="password" id="encode-pass" placeholder="Tambahkan lapisan keamanan ekstra..."
+              autocomplete="new-password" />
+            <button class="toggle-pw" onclick="togglePw('encode-pass', this)" aria-label="Tampilkan kata sandi">
+              <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
-            </div>
-            <h3>
-              Seret gambar stego di sini atau
-              <span class="link">klik untuk memilih</span>
-            </h3>
-            <p>Unggah gambar yang diduga menyimpan pesan tersembunyi</p>
-          </div>
-
-          <div class="preview-wrap" id="decode-preview-wrap" hidden>
-            <img id="decode-preview-img" src="" alt="Preview gambar stego" />
-            <button
-              class="preview-remove"
-              onclick="removeImage('decode')"
-              aria-label="Hapus gambar"
-            >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+              <svg class="eye-icon eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true" style="display: none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                <line x1="1" y1="1" x2="23" y2="23" />
               </svg>
-              Hapus
             </button>
           </div>
+          <p class="field-hint">
+            Jika diisi, penerima harus memasukkan kata sandi yang sama untuk
+            membaca pesan.
+          </p>
+        </div>
 
-          <div class="field-group">
-            <label for="decode-pass"
-              >Kata Sandi <span class="optional">(jika ada)</span></label
-            >
-            <div class="password-wrap">
-              <input
-                type="password"
-                id="decode-pass"
-                placeholder="Masukkan kata sandi jika pesan diproteksi..."
-                autocomplete="off"
-              />
-              <button
-                class="toggle-pw"
-                onclick="togglePw('decode-pass', this)"
-                aria-label="Tampilkan kata sandi"
-              >
-                <svg
-                  class="eye-icon eye-open"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  aria-hidden="true"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <svg
-                  class="eye-icon eye-closed"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  aria-hidden="true"
-                  style="display: none"
-                >
-                  <path
-                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                  />
-                  <path
-                    d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
-                  />
-                  <line x1="1" y1="1" x2="23" y2="23" />
-                </svg>
-              </button>
-            </div>
-          </div>
+        <hr class="divider" />
 
-          <hr class="divider" />
+        <button class="btn-primary" onclick="encodeMessage()" id="btn-encode">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>Sembunyikan Pesan dalam Gambar</span>
+          <div class="spinner" id="encode-spinner" aria-hidden="true"></div>
+        </button>
 
-          <button class="btn-primary" onclick="decodeMessage()" id="btn-decode">
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-              <line x1="12" y1="16" x2="12" y2="16.01" />
+        <div class="progress-bar" id="encode-progress" hidden>
+          <div class="progress-fill" id="encode-progress-fill"></div>
+        </div>
+        <div class="result-box" id="encode-result" hidden>
+          <div class="result-header" id="encode-result-header"></div>
+          <div class="result-body" id="encode-result-body"></div>
+        </div>
+      </div>
+
+      <!-- DECODE PANEL -->
+      <div class="tab-panel" id="panel-decode" role="tabpanel" aria-labelledby="tab-decode" hidden>
+        <p class="section-label">Gambar Berisi Pesan</p>
+        <div class="upload-zone" id="decode-dropzone" ondragover="handleDrag(event, true, 'decode-dropzone')"
+          ondragleave="handleDrag(event, false, 'decode-dropzone')" ondrop="handleDrop(event, 'decode')" tabindex="0"
+          role="button" aria-label="Area unggah gambar stego. Seret dan lepas atau klik untuk memilih file.">
+          <input type="file" accept="image/png,image/bmp,image/gif" onchange="handleFile(event, 'decode')"
+            id="decode-file-input" tabindex="-1" aria-hidden="true" />
+          <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <span>Baca Pesan Tersembunyi</span>
-            <div class="spinner" id="decode-spinner" aria-hidden="true"></div>
-          </button>
-
-          <div class="progress-bar" id="decode-progress" hidden>
-            <div class="progress-fill" id="decode-progress-fill"></div>
           </div>
-          <div class="result-box" id="decode-result" hidden>
-            <div class="result-header" id="decode-result-header"></div>
-            <div class="result-body" id="decode-result-body"></div>
+          <h3>
+            Seret gambar stego di sini atau
+            <span class="link">klik untuk memilih</span>
+          </h3>
+          <p>Unggah gambar yang diduga menyimpan pesan tersembunyi</p>
+        </div>
+
+        <div class="preview-wrap" id="decode-preview-wrap" hidden>
+          <img id="decode-preview-img" src="" alt="Preview gambar stego" />
+          <button class="preview-remove" onclick="removeImage('decode')" aria-label="Hapus gambar">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            Hapus
+          </button>
+        </div>
+
+        <div class="field-group">
+          <label for="decode-pass">Kata Sandi <span class="optional">(jika ada)</span></label>
+          <div class="password-wrap">
+            <input type="password" id="decode-pass" placeholder="Masukkan kata sandi jika pesan diproteksi..."
+              autocomplete="off" />
+            <button class="toggle-pw" onclick="togglePw('decode-pass', this)" aria-label="Tampilkan kata sandi">
+              <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg class="eye-icon eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true" style="display: none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+            </button>
           </div>
         </div>
-        <!-- COMPRESS PANEL -->
-        <div
-          class="tab-panel"
-          id="panel-compress"
-          role="tabpanel"
-          aria-labelledby="tab-compress"
-          hidden
-        >
-          <p class="section-label">Gambar untuk Dikompresi</p>
-          <div
-            class="upload-zone"
-            id="compress-dropzone"
-            ondragover="handleDrag(event, true, 'compress-dropzone')"
-            ondragleave="handleDrag(event, false, 'compress-dropzone')"
-            ondrop="handleDrop(event, 'compress')"
-            tabindex="0"
-            role="button"
-            aria-label="Area unggah gambar untuk kompresi. Seret dan lepas atau klik untuk memilih file."
-          >
-            <input
-              type="file"
-              accept="image/png,image/bmp,image/gif,image/jpeg,image/webp"
-              onchange="handleFileCompress(event)"
-              id="compress-file-input"
-              tabindex="-1"
-              aria-hidden="true"
-            />
-            <div class="upload-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                <polyline points="4 14 10 14 10 20" />
-                <polyline points="20 10 14 10 14 4" />
-                <line x1="14" y1="10" x2="21" y2="3" />
-                <line x1="3" y1="21" x2="10" y2="14" />
-              </svg>
-            </div>
-            <h3>Seret gambar ke sini atau <span class="link">klik untuk memilih</span></h3>
-            <p>Format: PNG, BMP, GIF, JPG, WebP &middot; Semua pemrosesan terjadi di browser</p>
-          </div>
 
-          <div class="preview-wrap" id="compress-preview-wrap" hidden>
-            <img id="compress-preview-img" src="" alt="Preview gambar yang diunggah" />
-            <button class="preview-remove" onclick="removeImageCompress()" aria-label="Hapus gambar">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-              Hapus
-            </button>
-          </div>
+        <hr class="divider" />
 
-          <div class="field-group" id="compress-options" hidden>
-            <label for="compress-quality">Kualitas WebP</label>
-            <div class="compress-quality-row">
-              <input type="range" id="compress-quality" min="1" max="95" value="80" oninput="updateQualityLabel()" />
-              <span class="quality-label" id="quality-label-val">80%</span>
-            </div>
-            <p class="compress-hint">Semakin rendah kualitas, semakin kecil ukuran file. Nilai 70–85% biasanya optimal untuk foto.</p>
-            <p class="compress-hint" id="input-format-hint" hidden></p>
-          </div>
+        <button class="btn-primary" onclick="decodeMessage()" id="btn-decode">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+            <line x1="12" y1="16" x2="12" y2="16.01" />
+          </svg>
+          <span>Baca Pesan Tersembunyi</span>
+          <div class="spinner" id="decode-spinner" aria-hidden="true"></div>
+        </button>
 
-          <hr class="divider" id="compress-divider" hidden />
-
-          <button class="btn-primary" onclick="compressImage()" id="btn-compress" hidden>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <div class="progress-bar" id="decode-progress" hidden>
+          <div class="progress-fill" id="decode-progress-fill"></div>
+        </div>
+        <div class="result-box" id="decode-result" hidden>
+          <div class="result-header" id="decode-result-header"></div>
+          <div class="result-body" id="decode-result-body"></div>
+        </div>
+      </div>
+      <!-- COMPRESS PANEL -->
+      <div class="tab-panel" id="panel-compress" role="tabpanel" aria-labelledby="tab-compress" hidden>
+        <p class="section-label">Gambar untuk Dikompresi</p>
+        <div class="upload-zone" id="compress-dropzone" ondragover="handleDrag(event, true, 'compress-dropzone')"
+          ondragleave="handleDrag(event, false, 'compress-dropzone')" ondrop="handleDrop(event, 'compress')"
+          tabindex="0" role="button"
+          aria-label="Area unggah gambar untuk kompresi. Seret dan lepas atau klik untuk memilih file.">
+          <input type="file" accept="image/png,image/bmp,image/gif,image/jpeg,image/webp"
+            onchange="handleFileCompress(event)" id="compress-file-input" tabindex="-1" aria-hidden="true" />
+          <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
               <polyline points="4 14 10 14 10 20" />
               <polyline points="20 10 14 10 14 4" />
               <line x1="14" y1="10" x2="21" y2="3" />
               <line x1="3" y1="21" x2="10" y2="14" />
             </svg>
-            <span>Kompresi ke WebP</span>
-            <div class="spinner" id="compress-spinner" aria-hidden="true"></div>
-          </button>
-
-          <div class="progress-bar" id="compress-progress" hidden>
-            <div class="progress-fill" id="compress-progress-fill"></div>
           </div>
-          <div class="result-box" id="compress-result" hidden>
-            <div class="result-header" id="compress-result-header"></div>
-            <div class="result-body" id="compress-result-body"></div>
-          </div>
+          <h3>Seret gambar ke sini atau <span class="link">klik untuk memilih</span></h3>
+          <p>Format: PNG, BMP, GIF, JPG, WebP &middot; Semua pemrosesan terjadi di browser</p>
         </div>
 
-        <!-- DECOMPRESS PANEL -->
-        <div
-          class="tab-panel"
-          id="panel-decompress"
-          role="tabpanel"
-          aria-labelledby="tab-decompress"
-          hidden
-        >
-          <p class="section-label">File Gambar Terkompresi</p>
-          <div
-            class="upload-zone"
-            id="decompress-dropzone"
-            ondragover="handleDrag(event, true, 'decompress-dropzone')"
-            ondragleave="handleDrag(event, false, 'decompress-dropzone')"
-            ondrop="handleDropDecompress(event)"
-            tabindex="0"
-            role="button"
-            aria-label="Area unggah gambar terkompresi. Seret dan lepas atau klik untuk memilih file."
-          >
-            <input
-              type="file"
-              accept="image/webp,image/png,image/bmp,image/gif,image/jpeg"
-              onchange="handleFileDecompress(event)"
-              id="decompress-file-input"
-              tabindex="-1"
-              aria-hidden="true"
-            />
-            <div class="upload-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                <polyline points="14 4 14 10 20 10" />
-                <polyline points="10 20 10 14 4 14" />
-                <line x1="21" y1="3" x2="14" y2="10" />
-                <line x1="3" y1="21" x2="10" y2="14" />
-              </svg>
-            </div>
-            <h3>Seret gambar ke sini atau <span class="link">klik untuk memilih</span></h3>
-            <p>Unggah gambar terkompresi untuk dikonversi ke PNG (lossless tanpa metadata)</p>
+        <div class="preview-wrap" id="compress-preview-wrap" hidden>
+          <img id="compress-preview-img" src="" alt="Preview gambar yang diunggah" />
+          <button class="preview-remove" onclick="removeImageCompress()" aria-label="Hapus gambar">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            Hapus
+          </button>
+        </div>
+
+        <div class="field-group" id="compress-options" hidden>
+          <label for="compress-quality">Kualitas WebP</label>
+          <div class="compress-quality-row">
+            <input type="range" id="compress-quality" min="1" max="95" value="80" oninput="updateQualityLabel()" />
+            <span class="quality-label" id="quality-label-val">80%</span>
           </div>
+          <p class="compress-hint">Semakin rendah kualitas, semakin kecil ukuran file. Nilai 70–85% biasanya optimal
+            untuk foto.</p>
+          <p class="compress-hint" id="input-format-hint" hidden></p>
+        </div>
 
-          <div class="preview-wrap" id="decompress-preview-wrap" hidden>
-            <img id="decompress-preview-img" src="" alt="Preview gambar terkompresi" />
-            <button class="preview-remove" onclick="removeImageDecompress()" aria-label="Hapus gambar">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-              Hapus
-            </button>
-          </div>
+        <hr class="divider" id="compress-divider" hidden />
 
-          <div class="decompress-info" id="decompress-info" hidden>
-            <div class="dinfo-row"><span class="dinfo-label">Format asli</span><span id="dinfo-format">—</span></div>
-            <div class="dinfo-row"><span class="dinfo-label">Dimensi</span><span id="dinfo-dims">—</span></div>
-            <div class="dinfo-row"><span class="dinfo-label">Ukuran file</span><span id="dinfo-size">—</span></div>
-          </div>
+        <button class="btn-primary" onclick="compressImage()" id="btn-compress" hidden>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" aria-hidden="true">
+            <polyline points="4 14 10 14 10 20" />
+            <polyline points="20 10 14 10 14 4" />
+            <line x1="14" y1="10" x2="21" y2="3" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+          <span>Kompresi ke WebP</span>
+          <div class="spinner" id="compress-spinner" aria-hidden="true"></div>
+        </button>
 
-          <hr class="divider" id="decompress-divider" hidden />
+        <div class="progress-bar" id="compress-progress" hidden>
+          <div class="progress-fill" id="compress-progress-fill"></div>
+        </div>
+        <div class="result-box" id="compress-result" hidden>
+          <div class="result-header" id="compress-result-header"></div>
+          <div class="result-body" id="compress-result-body"></div>
+        </div>
+      </div>
 
-          <button class="btn-primary" onclick="decompressImage()" id="btn-decompress" hidden>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+      <!-- DECOMPRESS PANEL -->
+      <div class="tab-panel" id="panel-decompress" role="tabpanel" aria-labelledby="tab-decompress" hidden>
+        <p class="section-label">File Gambar Terkompresi</p>
+        <div class="upload-zone" id="decompress-dropzone" ondragover="handleDrag(event, true, 'decompress-dropzone')"
+          ondragleave="handleDrag(event, false, 'decompress-dropzone')" ondrop="handleDropDecompress(event)"
+          tabindex="0" role="button"
+          aria-label="Area unggah gambar terkompresi. Seret dan lepas atau klik untuk memilih file.">
+          <input type="file" accept="image/webp,image/png,image/bmp,image/gif,image/jpeg"
+            onchange="handleFileDecompress(event)" id="decompress-file-input" tabindex="-1" aria-hidden="true" />
+          <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
               <polyline points="14 4 14 10 20 10" />
               <polyline points="10 20 10 14 4 14" />
               <line x1="21" y1="3" x2="14" y2="10" />
               <line x1="3" y1="21" x2="10" y2="14" />
             </svg>
-            <span>Dekompres ke PNG</span>
-            <div class="spinner" id="decompress-spinner" aria-hidden="true"></div>
+          </div>
+          <h3>Seret gambar ke sini atau <span class="link">klik untuk memilih</span></h3>
+          <p>Unggah gambar terkompresi untuk dikonversi ke PNG (lossless tanpa metadata)</p>
+        </div>
+
+        <div class="preview-wrap" id="decompress-preview-wrap" hidden>
+          <img id="decompress-preview-img" src="" alt="Preview gambar terkompresi" />
+          <button class="preview-remove" onclick="removeImageDecompress()" aria-label="Hapus gambar">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            Hapus
           </button>
+        </div>
 
-          <div class="progress-bar" id="decompress-progress" hidden>
-            <div class="progress-fill" id="decompress-progress-fill"></div>
-          </div>
-          <div class="result-box" id="decompress-result" hidden>
-            <div class="result-header" id="decompress-result-header"></div>
-            <div class="result-body" id="decompress-result-body"></div>
-          </div>
+        <div class="decompress-info" id="decompress-info" hidden>
+          <div class="dinfo-row"><span class="dinfo-label">Format asli</span><span id="dinfo-format">—</span></div>
+          <div class="dinfo-row"><span class="dinfo-label">Dimensi</span><span id="dinfo-dims">—</span></div>
+          <div class="dinfo-row"><span class="dinfo-label">Ukuran file</span><span id="dinfo-size">—</span></div>
         </div>
-      </div>
-      <!-- /tabs-wrapper -->
 
-      <!-- INFO CARDS -->
-      <div class="info-grid">
-        <div class="info-card">
-          <div class="ic-icon" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              <circle cx="12" cy="16" r="1" />
-            </svg>
-          </div>
-          <h3>Teknik LSB</h3>
-          <p>
-            Pesan disimpan di bit paling tidak signifikan setiap piksel —
-            perubahan visual tidak terlihat mata manusia.
-          </p>
+        <hr class="divider" id="decompress-divider" hidden />
+
+        <button class="btn-primary" onclick="decompressImage()" id="btn-decompress" hidden>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" aria-hidden="true">
+            <polyline points="14 4 14 10 20 10" />
+            <polyline points="10 20 10 14 4 14" />
+            <line x1="21" y1="3" x2="14" y2="10" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+          <span>Dekompres ke PNG</span>
+          <div class="spinner" id="decompress-spinner" aria-hidden="true"></div>
+        </button>
+
+        <div class="progress-bar" id="decompress-progress" hidden>
+          <div class="progress-fill" id="decompress-progress-fill"></div>
         </div>
-        <div class="info-card">
-          <div class="ic-icon" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            >
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
-            </svg>
-          </div>
-          <h3>100% Lokal</h3>
-          <p>
-            Semua proses terjadi di browser — tidak ada data yang dikirim ke
-            server. Privasi terjamin sepenuhnya.
-          </p>
-        </div>
-        <div class="info-card">
-          <div class="ic-icon" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            >
-              <path
-                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
-              />
-            </svg>
-          </div>
-          <h3>Proteksi Kata Sandi</h3>
-          <p>
-            Tambahkan lapisan keamanan dengan kata sandi XOR cipher agar hanya
-            penerima yang memiliki kunci bisa membaca.
-          </p>
-        </div>
-        <div class="info-card">
-          <div class="ic-icon" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            >
-              <polyline points="4 14 10 14 10 20" />
-              <polyline points="20 10 14 10 14 4" />
-              <line x1="14" y1="10" x2="21" y2="3" />
-              <line x1="3" y1="21" x2="10" y2="14" />
-            </svg>
-          </div>
-          <h3>Kompresi Gambar</h3>
-          <p>
-            Kompres gambar apa pun ke WebP lossy untuk ukuran file yang jauh lebih kecil, atau dekompres/konversi ke PNG lossless — semua di browser tanpa upload ke server.
-          </p>
+        <div class="result-box" id="decompress-result" hidden>
+          <div class="result-header" id="decompress-result-header"></div>
+          <div class="result-body" id="decompress-result-body"></div>
         </div>
       </div>
     </div>
-    <!-- /container -->
+    <!-- /tabs-wrapper -->
 
-    <footer>
-      <p>Steganografi LSB berbasis browser</p>
-      <p>
-        @2026 · Created by Group 9 for Multimedia Systems Course. All rights
-        reserved.
-      </p>
-    </footer>
 
-    <canvas id="working-canvas" hidden aria-hidden="true"></canvas>
-    <script src="script.js"></script>
-  </body>
+  </div>
+  <!-- /container -->
+
+  <footer>
+    <p>Steganografi LSB berbasis browser</p>
+    <p>
+      @2026 · Created by Group 9 for Multimedia Systems Course. All rights
+      reserved.
+    </p>
+  </footer>
+
+  <canvas id="working-canvas" hidden aria-hidden="true"></canvas>
+  <div class="custom-modal-backdrop" id="custom-alert" hidden>
+    <div class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="custom-alert-title">
+      <div class="custom-modal-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="alert-icon" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3 id="custom-alert-title">Perhatian</h3>
+      </div>
+      <div class="custom-modal-body">
+        <p id="custom-alert-msg"></p>
+      </div>
+      <div class="custom-modal-footer">
+        <button class="btn-primary" onclick="closeCustomAlert()">Mengerti</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
 </html>
